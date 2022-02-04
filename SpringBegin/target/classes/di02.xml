@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+           
+   <bean id="pen" name="dd ee" class="com.test.spring.di02.Pen"></bean> 
+   <bean id="hong" name="aa bb cc" class="com.test.spring.di02.Hong">
+   		<constructor-arg ref="pen"></constructor-arg>
+   </bean> 
+</beans>

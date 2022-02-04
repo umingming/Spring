@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+           
+   <bean id="d" class="com.test.spring.di05.DDD"></bean>
+   <bean id="c" class="com.test.spring.di05.CCC">
+   		<constructor-arg ref="d"></constructor-arg>
+   </bean>
+   <bean id="b" class="com.test.spring.di05.BBB">
+   		<constructor-arg ref="c"></constructor-arg>
+   </bean>
+   <bean id="a" class="com.test.spring.di05.AAA">
+   		<constructor-arg ref="a"></constructor-arg>
+   </bean>
+</beans>
