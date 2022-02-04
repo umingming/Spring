@@ -1,1 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+           
+   <bean id="memo" class="com.test.spring.aop.Memo"></bean>
+   <bean id="logger" class="com.test.spring.aop.Logger"></bean>
+   <bean id="auth" class="com.test.spring.aop.Auth"></bean>
+   
+   <aop:config>
+   		<aop:aspect id="loggerAdvice" ref="logger">
+   			<aop:pointcut expression="execution(public void com.test.spring.aop.Memo.add(String))" id="p1"/>
+   			<aop:pointcut expression="execution(public void com.test.spring.aop.Memo.edit(int, String))" id="p1"/>
+   			<aop:pointcut expression="execution(public void com.test.spring.aop.Memo.del(int))" id="p1"/>
+   			<aop:after method="log" pointcut-ref="p1"/>
+   		</aop:aspect>
+   		
+   		<aop:aspect id="authAdvice" ref="auth">
+   			<aop:pointcut expression="execution(publc void com.test.spring.aop.Memo.auth_*(..))" id="p5"/>
+   			<aop:pointcut expression="execution(* *.*(...))" id="p5"/>
+   			<aop:before method="auth" pointcut-ref="p5"/>
+   		</aop:aspect>
+   </aop:config>
+</beans>
