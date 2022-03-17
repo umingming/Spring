@@ -1,8 +1,8 @@
-package jpabook.jpashop.domain;
+package jpabook.jpashop.domain.item;
 
 import javax.persistence.Entity;
 
 @Entity
-public class Book {
+public class Book extends Item{
 	
 }

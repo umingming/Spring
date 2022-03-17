@@ -1,5 +1,5 @@
 package jpabook.jpashop.domain.item;
 
-public class Movie {
+public class Movie extends Item{
 
 }
