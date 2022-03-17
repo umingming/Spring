@@ -7,6 +7,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class Delivery {
 	@Column(name = "delivery_id")
 	private Long id;
 	
-	@OneToOne
+	@OneToOne(mappedBy = "delivery")
 	private Order order;
 	
 	@Embedded

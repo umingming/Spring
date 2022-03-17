@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class Order {
 	private List<OrderItem> orderItems = new ArrayList<>();
 	
 	@OneToOne
+	@JoinColumn(name = "delivery_id") //연관 ㅗ간계 주인
 	private Delivery delivery;
 	
 	private LocalDateTime orderDateTime;
