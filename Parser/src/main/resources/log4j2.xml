@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_FORMAT">%d{yyyy-MM-dd HH:mm:ss} %p %m%n</Property>
+        <Property name="BASE_DIR">C:/Aim/Spring/</Property>  
+    </Properties>
+
+    <Appenders>
+        <RollingFile name="File"
+                     fileName="${BASE_DIR}/bootdemo.log"
+                     filePattern="${BASE_DIR}/bootdemo.%d{yyyyMMdd}.log">
+            <PatternLayout pattern="${LOG_FORMAT}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${BASE_DIR}">
+                    <IfFileName glob="*.log" />
+                    <IfLastModified age="30d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="File" />
+        </Root>
+    </Loggers>
+</Configuration>

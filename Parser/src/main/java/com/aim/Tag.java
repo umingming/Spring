@@ -1,4 +1,4 @@
-package com.parser.jdom;
+package com.aim;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ public class Tag {
 	private String tag;
 	private String name;
 	
-//	public Tag(String tag) {
-//		this.tag = tag;
-//	}
+	public Tag(String tag) {
+		this.tag = tag;
+	}
 }
