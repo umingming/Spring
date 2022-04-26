@@ -226,7 +226,7 @@ public class JdomParser {
 	/*
 		부모 요소 내에서 태그 탐색해 주석 처리함.
 	 */
-	public void toggleComment(Element parent, Tag tag) {
+	public void commentOut(Element parent, Tag tag) {
 		Element child = navigate(parent, tag);
 		
 		if(child != null) {
@@ -241,7 +241,7 @@ public class JdomParser {
 	/*
 		태그를 탐색해 주석 처리함.
 	 */
-	public void toggleComment(Tag tag) {
+	public void commentOut(Tag tag) {
 		Element child = navigate(tag);
 		
 		if(child != null) {

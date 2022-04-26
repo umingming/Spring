@@ -18,11 +18,9 @@ public class XmlParserApplication {
 	private static String path;
 	
 	private static JdomParser parser;
-	private static Logger logger;
 	private static Scanner scan;
 	
 	static {
-		logger = LogManager.getLogger(XmlParserApplication.class);
 		scan = new Scanner(System.in);
 	}
 	
@@ -30,34 +28,43 @@ public class XmlParserApplication {
 		try {
 			SpringApplication.run(XmlParserApplication.class, args);
 			
-			/* 파싱 */
 			parse();
-
-			/* 출력 */
-			parser.print();
 			
-			/* 요소 수정 */
-			modify();
-			
-			/* 요소 추가 */
-			addChild();
-			
-			/* 요소 삭제 */
-			parser.remove(getTag());
-			
-			/* 주석 처리 */
-			parser.toggleComment(getTag());
-			
-			/* 다른 이름으로 저장 */
-			rename();
-			
+			while(true) {
+				menu();
+				
+				switch(scan.nextLine()) {
+					case "1" : 
+						parser.print();
+						break;
+					case "2" :
+						modify();
+						break;
+					case "3" :
+						addChild();
+						break;
+					case "4" :
+						parser.commentOut(getTag());
+						break;
+					case "5" :
+						parser.remove(getTag());
+						break;
+					case "6" :
+						rename();
+						break;
+					default :
+						System.out.println("Please Enter again.");
+						break;
+				}
+				pause();
+			}
 		} catch (Exception e) {
-			logger.error(e);
+			e.getStackTrace();
 		}
 	}
 
 	private static void rename() throws Exception {
-		System.out.println("Enter a new name. \r\n 👉 ");
+		System.out.print("Enter a new name. \r\n 👉 ");
 		parser.rename(scan.nextLine());
 	}
 
@@ -65,9 +72,9 @@ public class XmlParserApplication {
 		Element element = parser.navigate(getTag());
 		
 		if(element != null) {
-			System.out.println("Enter a attribute to be modified. \r\n 👉 ");
+			System.out.print("Enter a attribute to be modified. \r\n 👉 ");
 			String attr = scan.nextLine();
-			System.out.println("Enter a Value for the attribute. \r\n 👉 ");
+			System.out.print("Enter a Value for the attribute. \r\n 👉 ");
 			String value = scan.nextLine();
 			
 			parser.modify(element, attr, value);
@@ -77,10 +84,10 @@ public class XmlParserApplication {
 	private static Tag getTag() {
 		Tag tag= new Tag();
 		
-		System.out.println("Enter a tag type. \r\n 👉 ");
+		System.out.print("Enter a tag type. \r\n 👉 ");
 		tag.setTag(scan.nextLine());
 		
-		System.out.println("Enter the tag name. \r\n 👉 ");
+		System.out.print("Enter the tag name. \r\n 👉 ");
 		tag.setName(scan.nextLine());
 		
 		return tag;
@@ -103,7 +110,21 @@ public class XmlParserApplication {
 	}
 
 	public static void setPath() {
-		System.out.println("Enter a file to parse. \r\n 👉 ");
+		System.out.print("Enter a file to parse. \r\n 👉 ");
 		path = scan.nextLine();
+	}
+	
+	private static void pause() {
+		System.out.print("\r\n(Please press enter.)");
+		scan.nextLine();
+	}
+	
+	private static void menu() {
+		System.out.println("\r\n1. Print the file");
+		System.out.println("2. Modify an element");
+		System.out.println("3. Add an element");
+		System.out.println("4. Comment out an element");
+		System.out.println("5. Remove an element");
+		System.out.print("6. Rename the file\r\n 👉 ");
 	}
 }
