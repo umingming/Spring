@@ -170,6 +170,20 @@ public class JdomParser {
 	}
 	
 	/*
+		부모에 해당 태그 자식을 생성함.
+	 */
+	public void createChild(Element parent, Tag tagChild) { //if
+		if(parent != null) {
+			Element child = new Element(tagChild.getTag())
+					.setAttribute("Name", tagChild.getName());
+			parent.addContent(child);
+			logger.info("Success to create : " + tagChild.getName());
+		} else {
+			logger.error("Failure to create : " + tagChild.getName());
+		}
+	}
+	
+	/*
 		태그 탐색 후 해당 태그를 원하는 속성으로 수정함.
 	 */
 	public void modify(Tag tag, String attr, String value) { //if문으로 밸리데이션할 것.
@@ -243,7 +257,7 @@ public class JdomParser {
 	/*
 		태그 탐색해 삭제함.
 	 */
-	public void delete(Tag tag) {
+	public void remove(Tag tag) {
 		Element element = navigate(tag);
 		
 		if(element != null) {
@@ -257,9 +271,11 @@ public class JdomParser {
 	/*
 		새로운 경로에 저장
 	 */
-	public void update(String newPath) throws Exception {
+	public void rename(String name) throws Exception {
 		if(doc != null) {
-			xout.output(doc, new FileOutputStream(newPath));
+			String newFile = String.format("%s\\%s.xml"
+											, file.getParent(), name);
+			xout.output(doc, new FileOutputStream(newFile));
 			logger.info("Success to update : " + file.getName());
 		} else {
 			logger.error("Failure to update : " + file.getName());

@@ -4,10 +4,14 @@ import lombok.Data;
 
 @Data
 public class Tag {
-	private String tag;
+	private TagName tag;
 	private String name;
 	
 	public Tag(String tag) {
-		this.tag = tag;
+		this.tag = TagName.valueOf(tag);
+	}
+	
+	public String getTag() {
+		return tag.toString();
 	}
 }

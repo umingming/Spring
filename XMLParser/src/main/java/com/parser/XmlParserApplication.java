@@ -1,5 +1,8 @@
 package com.parser;
 
+import java.io.File;
+import java.util.Scanner;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
@@ -13,28 +16,14 @@ import com.parser.jdom.Tag;
 @SpringBootApplication
 public class XmlParserApplication {
 	private static String path;
-	private static String newPath;
-	private static String attr;
-	private static String attrValue;
-	
-	private static Tag block;
-	private static Tag item;
-	private static Tag trx;
-	private static Tag multiBlock;
-	private static Tag blockInTrx;
-	private static Tag itemInTrx;
 	
 	private static JdomParser parser;
 	private static Logger logger;
+	private static Scanner scan;
 	
 	static {
-		block = new Tag();
-		item = new Tag();
-		trx = new Tag();
-		multiBlock = new Tag();
-		blockInTrx = new Tag();
-		itemInTrx = new Tag();
 		logger = LogManager.getLogger(XmlParserApplication.class);
+		scan = new Scanner(System.in);
 	}
 	
 	public static void main(String[] args) {
@@ -42,97 +31,79 @@ public class XmlParserApplication {
 			SpringApplication.run(XmlParserApplication.class, args);
 			
 			/* 파싱 */
-			parser = new JdomParser(path); 
+			parse();
 
+			/* 출력 */
+			parser.print();
+			
 			/* 요소 수정 */
-			Element eleItem = parser.navigate(block, item);
-			parser.modify(eleItem, attr, attrValue);
+			modify();
 			
 			/* 요소 추가 */
 			addChild();
 			
-			/* 출력 */
-			parser.print();
-			parser.update(newPath);
+			/* 요소 삭제 */
+			parser.remove(getTag());
+			
+			/* 주석 처리 */
+			parser.toggleComment(getTag());
+			
+			/* 다른 이름으로 저장 */
+			rename();
+			
 		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
 
-	private static void addChild() {
-		Element eleTrx = parser.navigate(trx);
+	private static void rename() throws Exception {
+		System.out.println("Enter a new name. \r\n 👉 ");
+		parser.rename(scan.nextLine());
+	}
+
+	private static void modify() {
+		Element element = parser.navigate(getTag());
 		
-		if(eleTrx != null) {
-			Element eleMultiBlock = parser.copy(eleTrx, multiBlock);
-			Element eleBlock = parser.copy(eleTrx, blockInTrx);
-			Element eleItem = parser.copy(eleTrx, itemInTrx);
+		if(element != null) {
+			System.out.println("Enter a attribute to be modified. \r\n 👉 ");
+			String attr = scan.nextLine();
+			System.out.println("Enter a Value for the attribute. \r\n 👉 ");
+			String value = scan.nextLine();
 			
-			// Trx에 MultiBlock 추가
-			eleTrx.addContent(eleMultiBlock);
-			eleMultiBlock.addContent(eleBlock);
-			eleBlock.addContent(eleItem);
+			parser.modify(element, attr, value);
 		}
 	}
 
-	@Value("${xml.path}")
-	public void setPath(String input) {
-		path = input;
+	private static Tag getTag() {
+		Tag tag= new Tag();
+		
+		System.out.println("Enter a tag type. \r\n 👉 ");
+		tag.setTag(scan.nextLine());
+		
+		System.out.println("Enter the tag name. \r\n 👉 ");
+		tag.setName(scan.nextLine());
+		
+		return tag;
 	}
 	
-	@Value("${new-xml.path}")
-	public void setNewPath(String input) {
-		newPath = input;
+	private static void parse() throws Exception {
+		setPath();
+		
+		if(new File(path).exists()) {
+			parser = new JdomParser(path); 
+		}
 	}
 
-	@Value("${tag.attr.point}")
-	public void setAttr(String input) {
-		attr = input;
-	}
-	
-	@Value("${block.item.point.value}")
-	public void setAttrValue(String input) {
-		attrValue = input;
+	private static void addChild() {
+		Element element = parser.navigate(getTag());
+		
+		if(element != null) {
+			parser.createChild(element, getTag());
+		}
 	}
 
-	@Value("${tag.block} ${block.name}")
-	public void setBlock(String input) {
-		String[] info =  input.split(" "); //null이 발생하면 어떻게 할지? 예외처리
-		block.setTag(info[0]);
-		block.setName(info[1]);
+	public static void setPath() {
+		System.out.println("Enter a file to parse. \r\n 👉 ");
+		path = scan.nextLine();
 	}
-	
-	@Value("${tag.item} ${block.item.name}")
-	public void setItem(String input) {
-		String[] info =  input.split(" ");
-		item.setTag(info[0]);
-		item.setName(info[1]);
-	}
-
-	@Value("${tag.trx} ${trx.name}")
-	public void setTrx(String input) {
-		String[] info =  input.split(" ");
-		trx.setTag(info[0]);
-		trx.setName(info[1]);
-	}
-	
-	@Value("${tag.multi-block} ${trx.multi-block.name}")
-	public void setMultiBlock(String input) {
-		String[] info =  input.split(" ");
-		multiBlock.setTag(info[0]);
-		multiBlock.setName(info[1]);
-	}
-
-	@Value("${tag.block} ${trx.multi-block.block.name}")
-	public void setBlockInTrx(String input) {
-		String[] info =  input.split(" ");
-		blockInTrx.setTag(info[0]);
-		blockInTrx.setName(info[1]);
-	}
-	
-	@Value("${tag.item} ${trx.multi-block.block.item.name}")
-	public void setItemInTrx(String input) {
-		String[] info =  input.split(" ");
-		itemInTrx.setTag(info[0]);
-		itemInTrx.setName(info[1]);
-	}//더 나은 방법이 있는지
 }

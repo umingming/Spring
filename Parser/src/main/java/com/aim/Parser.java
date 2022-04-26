@@ -53,8 +53,6 @@ public class Parser {
 		if(file.exists()) {
 			SAXBuilder builder = new SAXBuilder();
 			this.doc = builder.build(file);
-			
-			logger.info("Success to parse : " + file.getName());
 		} else {
 			logger.error("Failure to parse : " + file.getName());
 		}
@@ -80,7 +78,6 @@ public class Parser {
 		
 		if(doc != null) {
 			xout.output(doc, System.out);
-			logger.info("Success to print : " + file.getName());
 		} else {
 			logger.error("Failure to print : " + file.getName());
 		}
@@ -96,7 +93,6 @@ public class Parser {
 			Element descendant = (Element) iter.next();
 			
 			if(descendant.getAttributeValue("Name").equals(tag.getName())) {
-				logger.info("Success to navigate : " + tag.getName());
 				return descendant;
 			} 
 		}
@@ -115,7 +111,6 @@ public class Parser {
 				Element descendant = (Element) iter.next();
 				
 				if(descendant.getAttributeValue("Name").equals(tag.getName())) {
-					logger.info("Success to navigate : " + tag.getName());
 					return descendant;
 				}
 			}
@@ -137,7 +132,6 @@ public class Parser {
 				Element descendant = (Element) iter.next();
 				
 				if(descendant.getAttributeValue("Name").equals(child.getName())) {
-					logger.info("Success to navigate : " + child.getName());
 					return descendant;
 				}
 			}
@@ -158,7 +152,6 @@ public class Parser {
 			String newVal = copy.getAttributeValue("Name") + "_APPEND";
 			copy.setAttribute("Name", newVal);
 			
-			logger.info("Success to copy : " + tag.getName());
 			return copy;
 		}
 		logger.error("Failure to copy : " + tag.getName());
@@ -175,7 +168,6 @@ public class Parser {
 			Element child = new Element(tagChild.getTag())
 					.setAttribute("Name", tagChild.getName());
 			parent.addContent(child);
-			logger.info("Success to create : " + tagChild.getName());
 		} else {
 			logger.error("Failure to create : " + tagChild.getName());
 		}
@@ -189,7 +181,6 @@ public class Parser {
 		
 		if(element != null) {
 			element.setAttribute(attr, value);
-			logger.info("Success to set : " + tag.getName());
 		} else {
 			logger.error("Filure to set : " + tag.getName());
 		}
@@ -201,7 +192,6 @@ public class Parser {
 	public void setAttr(Element element, String attr, String value) {
 		if(element.getAttribute(attr) != null) {
 			element.setAttribute(attr, value);
-			logger.info("Success to set : " + element.getName());
 		} else {
 			logger.error("Filure to set : " + element.getName());
 		}
@@ -215,7 +205,6 @@ public class Parser {
 		
 		if(element != null) {
 			element.setAttribute(attr, value);
-			logger.info("Success to set : " + tag.getName());
 		} else {
 			logger.error("Filure to set : " + tag.getName());
 		}
@@ -230,7 +219,6 @@ public class Parser {
 		if(child != null) {
 			Comment comment = new Comment(xout.outputString(child));
 			parent.setContent(parent.indexOf(child), comment);
-			logger.info("Success to toggle : " + tag.getName());
 		} else {
 			logger.error("Filure to toggle : " + tag.getName());
 		}
@@ -246,7 +234,6 @@ public class Parser {
 			Element parent = child.getParentElement();
 			Comment comment = new Comment(xout.outputString(child));
 			parent.setContent(parent.indexOf(child), comment);
-			logger.info("Success to toggle : " + tag.getName());
 		} else {
 			logger.error("Filure to toggle : " + tag.getName());
 		}
@@ -260,7 +247,6 @@ public class Parser {
 		
 		if(element != null) {
 			element.getParent().removeContent(element);
-			logger.info("Success to remove : " + tag.getName());
 		} else {
 			logger.error("Filure to remove : " + tag.getName());
 		}
@@ -274,7 +260,6 @@ public class Parser {
 			String newFile = String.format("%s\\%s.xml"
 										, file.getParent(), name);
 			xout.output(doc, new FileOutputStream(newFile));
-			logger.info("Success to rename : " + file.getName());
 		} else {
 			logger.error("Failure to rename : " + file.getName());
 		}
