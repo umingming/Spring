@@ -22,7 +22,7 @@ import com.parser.XmlParserApplication;
 	XML Parser
 	- XML 파일 객체화, 내용 출력, 수정
  */
-public class JdomParser {
+public class Parser {
 	private String path;
 	private File file;
 	private Document doc;
@@ -33,7 +33,7 @@ public class JdomParser {
 		parse();
 	}
 	
-	public JdomParser(String path) throws Exception {
+	public Parser(String path) throws Exception {
 		this.path = path;
 		this.file = new File(path);
 		this.logger = LogManager.getLogger(XmlParserApplication.class);
@@ -156,7 +156,7 @@ public class JdomParser {
 	/*
 		부모 태그로 요소 탐색 후 태그를 가진 자식을 생성함.
 	 */
-	public void createChild(Tag tagParent, Tag tagChild) { //if
+	public void createChild(Tag tagParent, Tag tagChild) { 
 		Element parent = navigate(tagParent);
 		
 		if(parent != null) {
@@ -172,7 +172,7 @@ public class JdomParser {
 	/*
 		부모에 해당 태그 자식을 생성함.
 	 */
-	public void createChild(Element parent, Tag tagChild) { //if
+	public void createChild(Element parent, Tag tagChild) { 
 		if(parent != null) {
 			Element child = new Element(tagChild.getTag())
 					.setAttribute("Name", tagChild.getName());
@@ -186,7 +186,7 @@ public class JdomParser {
 	/*
 		태그 탐색 후 해당 태그를 원하는 속성으로 수정함.
 	 */
-	public void modify(Tag tag, String attr, String value) { //if문으로 밸리데이션할 것.
+	public void modify(Tag tag, String attr, String value) { 
 		Element element = navigate(tag);
 		
 		if(element != null) {
@@ -198,7 +198,7 @@ public class JdomParser {
 	}
 	
 	/*
-		해당 요소를 원하는 속성 값으로 수정함
+		해당 요소를 원하는 속성 값으로 수정함.
 	 */
 	public void modify(Element element, String attr, String value) {
 		if(element.getAttribute(attr) != null) {
@@ -266,7 +266,7 @@ public class JdomParser {
 		} else {
 			logger.error("Filure to delete : " + tag.getName());
 		}
-	}//if문
+	}
 	
 	/*
 		새로운 경로에 저장
