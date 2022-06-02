@@ -7,12 +7,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import kr.co.aim.domain.Room;
+import kr.co.aim.repository.MemberRepository;
+import kr.co.aim.repository.MemberRoomRepository;
+import kr.co.aim.repository.MessageRepository;
+import kr.co.aim.repository.RoomRepository;
 
 /*
 	에코 서버
@@ -22,25 +30,34 @@ import org.springframework.stereotype.Component;
 public class Server {
 	private ServerSocket server;
 	private Socket client;
-	private ArrayList<ClientGroup> groupList = new ArrayList<>();
-	
+	private ArrayList<Room> roomList = new ArrayList<>();
 	private int index;
 	
 	@Value("${port}")
 	private int port;
 	
+	@Autowired
+	private RoomRepository roomRepository;
+	@Autowired
+	private MemberRoomRepository memberRoomRepository;
+	@Autowired
+	private MemberRepository memberRepository;
+	@Autowired
+	private MessageRepository messageRepository;
+	
 	/*
 		initServer; 서버를 실행함.
-		1. while문 server가 null이면 반복해서 setServer() 호출함.
-		2. server 설정이 되면, start() 호출
+		1. registerServer() 호출
+		2. if문 server가 할당될 경우를 조건
+			> communicateWithClient() 호출
 	 */	
 	@PostConstruct
 	public void initServer() {
 		registerServer();
 		
 		if(server != null) {
-			createGroup(2);
-			createGroup(2);
+			createRoom(2);
+			createRoom(2);
 			communicateWithClient();
 		}
 	}
@@ -63,36 +80,47 @@ public class Server {
 	}
 	
 	/*
-	 	createGroup; 그룹 생성
-	 	1. 매개변수를 크기로 하는 그룹 객체 생성함.
-	 	2. 해당 그룹을 리스트에 저장
+	 	createRoom; 대화방 생성
+	 	1. 매개변수를 크기로 하는 Room 객체 생성함.
+	 	2. 랜덤 이름 설정
+	 	3. Room 데이터 추가
+	 	4. 대화방 객체 리스트에 할당
 	 */
-	private void createGroup(int total) {
-		ClientGroup group = new ClientGroup(total);
-		groupList.add(group);
+	private void createRoom(int capacity) {
+		Room room = new Room(capacity);
+		room.setName("유미네" + new Random().nextInt(9999));
+		roomRepository.save(room);
+		roomList.add(room);
+		
+		System.out.println("[대화방 생성 성공]");
 	}
 	
 	/*
 		communicateWithClient(); 클라이언트의 접속을 확인하고 스레드 생성
 		1. while문 그룹이 2개 이하일 경우 반복
 			> 클라이언트 접근 확인 후 client 소켓에 초기화
-			> 스레드 선언 후 run 메소드 오버라이딩
-				> 클라이언트와, 그룹을 연결하기 위한 메소드 호출
-			> 스레드를 시작함.
 			> if 해당 그룹이 만원인지?
 				> index++
+			> 서버 스레드 생성 후 멤버와 채팅방 설정
+			> 레퍼지토리 인자로 할당해줌.
+			> 스레드를 시작함.
 	 */
 	private void communicateWithClient() {
 		try {
-			while(groupList.size() < 3) {
+			while(roomList.size() < 3) {
 				client = server.accept();
 				System.out.println("[사용자 접속 대기]");
-				
-				if(groupList.get(index).isFull()) {
+
+				if(roomList.get(index).isFull()) {
 					index++;
 				}
 				
-				ServerThread serverThread = new ServerThread(client, groupList.get(index));
+				ServerThread serverThread = new ServerThread(client, roomList.get(index));
+				serverThread.setMemberRepository(memberRepository);
+				serverThread.setMemberRoomRepository(memberRoomRepository);
+				serverThread.setMessageRepository(messageRepository);
+				serverThread.setRoomRepository(roomRepository);
+				
 				Thread thread = new Thread(serverThread);
 				thread.start();
 			}
